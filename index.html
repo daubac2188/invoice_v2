@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AU Invoice Editor</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <header class="toolbar">
+    <div class="toolbar-inner">
+      <div class="toolbar-title">
+        <h1>AU Invoice Editor</h1>
+        <p>Click any field on the invoice to edit it. Totals calculate live in AUD.</p>
+      </div>
+      <div class="toolbar-actions">
+        <button type="button" id="savePdfBtn" class="btn btn-primary">Save to PDF</button>
+        <button type="button" id="printBtn" class="btn">Print</button>
+        <button type="button" id="clearBtn" class="btn btn-danger">Clear / New invoice</button>
+      </div>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </header>
+
+  <main class="page-wrap">
+    <!-- White A4 paper -->
+    <article class="paper" id="invoicePaper" aria-label="Invoice">
+      <!-- Company name -->
+      <h2 class="company-name editable" contenteditable="true" spellcheck="false" data-placeholder="Your Company Name">Your Company Name</h2>
+
+      <h3 class="invoice-heading">INVOICE</h3>
+
+      <!-- Header blocks: client | meta | company address -->
+      <section class="header-blocks">
+        <div class="client-block">
+          <p class="editable" contenteditable="true" spellcheck="false" data-placeholder="Client's Company Name">Client's Company Name</p>
+          <p class="editable" contenteditable="true" spellcheck="false" data-placeholder="Attention: Client's Name">Attention: Client's Name</p>
+          <p class="editable" contenteditable="true" spellcheck="false" data-placeholder="Street Number &amp; Name or PO Box">Street Number &amp; Name or PO Box</p>
+          <p class="editable" contenteditable="true" spellcheck="false" data-placeholder="State &amp; Post Code">State &amp; Post Code</p>
+          <p class="editable" contenteditable="true" spellcheck="false" data-placeholder="Country">Country</p>
+        </div>
+
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Invoice Date</span>
+            <span class="meta-value editable" contenteditable="true" spellcheck="false" data-placeholder="DD/MM/YYYY"></span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Invoice Number</span>
+            <span class="meta-value editable" contenteditable="true" spellcheck="false" data-placeholder="INV-0001"></span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Reference/PO #</span>
+            <span class="meta-value editable" contenteditable="true" spellcheck="false" data-placeholder=""></span>
+          </div>
+        </div>
+
+        <div class="company-address">
+          <p class="editable" contenteditable="true" spellcheck="false" data-placeholder="Your Company Name">Your Company Name</p>
+          <p class="editable" contenteditable="true" spellcheck="false" data-placeholder="Street Number and Name">Street Number and Name</p>
+          <p class="editable" contenteditable="true" spellcheck="false" data-placeholder="State &amp; Post Code">State &amp; Post Code</p>
+          <p class="editable" contenteditable="true" spellcheck="false" data-placeholder="Country">Country</p>
+        </div>
+      </section>
+
+      <!-- Line items -->
+      <table class="items-table" aria-label="Invoice items">
+        <thead>
+          <tr>
+            <th class="col-desc">Description</th>
+            <th class="col-qty">Quantity</th>
+            <th class="col-price">Unit Price</th>
+            <th class="col-total">Total price AUD</th>
+            <th class="col-remove"><span class="sr-only">Remove</span></th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody">
+          <!-- Rows are rendered by app.js (6 starting rows) -->
+        </tbody>
+      </table>
+
+      <div class="table-actions">
+        <button type="button" id="addRowBtn" class="btn btn-small">+ Add row</button>
+      </div>
+
+      <!-- Totals -->
+      <section class="totals" aria-label="Totals">
+        <div class="total-row">
+          <span class="total-label">Subtotal AUD</span>
+          <span class="total-value" id="subtotalValue">$ 0.00</span>
+        </div>
+        <div class="total-row">
+          <span class="total-label">GST (<input type="number" id="gstRate" class="gst-input" min="0" max="100" step="0.5" value="10" aria-label="GST percentage">%) AUD</span>
+          <span class="total-value" id="gstValue">$ 0.00</span>
+        </div>
+        <div class="total-row total-row-grand">
+          <span class="total-label">TOTAL AUD</span>
+          <span class="total-value" id="totalValue">$ 0.00</span>
+        </div>
+      </section>
+
+      <!-- Due date / notes -->
+      <section class="footer-fields">
+        <p class="due-date"><strong>Due Date:</strong>
+          <span class="editable" contenteditable="true" spellcheck="false" data-placeholder="DD/MM/YYYY"></span>
+        </p>
+        <p class="notes-label">Additional notes</p>
+        <p class="notes editable" contenteditable="true" spellcheck="false" data-placeholder="Additional notes"></p>
+      </section>
+
+      <!-- Bank details -->
+      <section class="bank-details" aria-label="Bank details">
+        <h4>Bank Details</h4>
+        <div class="bank-grid">
+          <div class="bank-field">
+            <span class="bank-label">Bank Name</span>
+            <span class="bank-value editable" contenteditable="true" spellcheck="false" data-placeholder=""></span>
+          </div>
+          <div class="bank-field">
+            <span class="bank-label">Account Name</span>
+            <span class="bank-value editable" contenteditable="true" spellcheck="false" data-placeholder=""></span>
+          </div>
+          <div class="bank-field">
+            <span class="bank-label">BSB</span>
+            <span class="bank-value editable" contenteditable="true" spellcheck="false" data-placeholder="000-000"></span>
+          </div>
+          <div class="bank-field">
+            <span class="bank-label">Account No.</span>
+            <span class="bank-value editable" contenteditable="true" spellcheck="false" data-placeholder=""></span>
+          </div>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

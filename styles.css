@@ -1,0 +1,223 @@
+/* AU Invoice Editor — minimal, print-clean styles */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #f2f2f0;
+  color: #222;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+/* ---- Toolbar (hidden in print) ---- */
+.toolbar {
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.toolbar-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.toolbar-title h1 { font-size: 18px; margin: 0; }
+.toolbar-title p { font-size: 13px; color: #666; margin: 2px 0 0; }
+.toolbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.btn {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+.btn:hover { background: #f5f5f5; }
+.btn-primary { background: #0b6b4f; border-color: #0b6b4f; color: #fff; }
+.btn-primary:hover { background: #095c43; }
+.btn-danger { color: #a33; }
+.btn-small { padding: 5px 10px; font-size: 13px; }
+
+.toast {
+  display: none;
+  max-width: 900px;
+  margin: 0 auto 10px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #0b6b4f;
+}
+.toast.show { display: block; }
+
+/* ---- Paper ---- */
+.page-wrap { padding: 28px 16px 48px; }
+.paper {
+  background: #fff;
+  width: 794px;              /* ~A4 at 96dpi */
+  max-width: 100%;
+  min-height: 1123px;        /* ~A4 */
+  margin: 0 auto;
+  padding: 56px 56px 48px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.14);
+}
+
+.company-name {
+  font-size: 38px;
+  font-weight: 400;
+  margin: 0 0 28px;
+  line-height: 1.15;
+}
+.invoice-heading {
+  font-size: 26px;
+  letter-spacing: 0.5px;
+  margin: 0 0 18px;
+  color: #333;
+}
+
+/* Editable fields: look like plain text, show a hint on hover/focus */
+.editable {
+  outline: none;
+  border-bottom: 1px dashed transparent;
+  min-width: 40px;
+  display: inline-block;
+}
+.editable:hover, .editable:focus { border-bottom-color: #0b6b4f; background: #f7fbf9; }
+.editable:empty::before {
+  content: attr(data-placeholder);
+  color: #999;
+}
+
+/* ---- Header blocks ---- */
+.header-blocks {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+.header-blocks p { margin: 0 0 4px; }
+.meta-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: baseline;
+}
+.meta-label { font-weight: 700; flex: 0 0 118px; }
+.meta-value { flex: 1; }
+
+/* ---- Items table ---- */
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+.items-table th, .items-table td {
+  text-align: left;
+  padding: 8px 6px;
+  vertical-align: top;
+}
+.items-table thead th {
+  border-bottom: 2px solid #222;
+  font-size: 14px;
+}
+.items-table tbody tr:nth-child(even) { background: #efefef; }
+.items-table tbody td { border-bottom: 1px solid #ddd; }
+.col-qty { width: 90px; text-align: right; }
+.col-price { width: 110px; text-align: right; }
+.col-total { width: 130px; text-align: right; }
+.col-remove { width: 28px; }
+.items-table input[type="number"] {
+  width: 100%;
+  font: inherit;
+  text-align: right;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0;
+}
+.items-table input[type="number"]:hover,
+.items-table input[type="number"]:focus { background: #fff; outline: 1px solid #0b6b4f; }
+.row-total { text-align: right; white-space: nowrap; }
+.remove-row {
+  border: none; background: transparent; cursor: pointer;
+  color: #999; font-size: 16px; line-height: 1; padding: 0 2px;
+}
+.remove-row:hover { color: #a33; }
+
+.table-actions { margin: 8px 0 24px; }
+
+/* ---- Totals ---- */
+.totals { margin-left: auto; width: 340px; max-width: 100%; }
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+}
+.total-row-grand {
+  border-top: 2px solid #222;
+  margin-top: 6px;
+  padding-top: 10px;
+  font-weight: 700;
+}
+.gst-input {
+  width: 52px;
+  font: inherit;
+  text-align: right;
+  border: none;
+  border-bottom: 1px dashed transparent;
+  background: transparent;
+  outline: none;
+}
+.gst-input:hover, .gst-input:focus { border-bottom-color: #0b6b4f; background: #f7fbf9; }
+
+/* ---- Due date / notes ---- */
+.footer-fields { margin-top: 36px; }
+.due-date { margin: 0 0 18px; }
+.notes-label { margin: 0 0 4px; color: #444; }
+.notes { margin: 0; min-height: 48px; display: block; }
+
+/* ---- Bank details ---- */
+.bank-details { margin-top: 36px; }
+.bank-details h4 { margin: 0 0 10px; font-size: 16px; }
+.bank-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 32px;
+}
+.bank-field { display: flex; gap: 10px; align-items: baseline; }
+.bank-label { font-weight: 700; flex: 0 0 118px; }
+.bank-value { flex: 1; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .paper { padding: 32px 20px; min-height: 0; }
+  .company-name { font-size: 28px; }
+  .header-blocks { grid-template-columns: 1fr; gap: 12px; }
+  .bank-grid { grid-template-columns: 1fr; }
+  .col-qty { width: 64px; }
+  .col-price { width: 84px; }
+  .col-total { width: 96px; }
+}
+
+/* ---- Print ---- */
+@media print {
+  body { background: #fff; }
+  .toolbar, .table-actions, .remove-row, .col-remove { display: none !important; }
+  .page-wrap { padding: 0; }
+  .paper { box-shadow: none; width: auto; max-width: none; min-height: 0; padding: 0; }
+  .editable:empty::before { content: ""; }
+  @page { size: A4; margin: 15mm; }
+}
